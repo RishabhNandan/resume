@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rishabh Nandan - Resume Builder</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#edf1f5;color:#1f2937;font-family:Arial,Helvetica,sans-serif}
+.app{display:block;min-height:100vh;background:#edf1f5;padding:18px}
+.editor{display:none}
+.group{display:none}
+label{display:none}
+input,textarea{display:none}
+button{display:none}
+.preview-area{padding:0;overflow:auto;background:transparent}
+.resume{width:210mm;min-height:297mm;margin:0 auto;background:#fff;padding:12mm 12mm 10mm;border:1px solid #e7ebf0;box-shadow:0 18px 40px rgba(15,23,42,.08)}
+.resume-header{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #1b2c40;padding-bottom:7px;margin-bottom:9px}
+.header-text{flex:1}
+h1.name{margin:0;color:#1b2c40;font-size:22px;font-weight:800;letter-spacing:-.5px}
+.headline{margin-top:3px;color:#2d3f57;font-weight:700;font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+.contact{margin-top:6px;font-size:8px;color:#4b5563;line-height:1.5}
+.photo-box{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#1b2c40,#4d647d);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(27,44,64,.15);flex-shrink:0}
+.photo-placeholder{font-size:16px;font-weight:700;color:#fff;letter-spacing:.08em}
+.section{margin-top:10px}
+.section-title{margin:0 0 5px;padding-bottom:3px;border-bottom:1px solid #dfe7f1;color:#1b2c40;font-size:9.5px;letter-spacing:.12em;font-weight:800}
+p{margin:0 0 4px;font-size:7.8px;line-height:1.4;color:#2f3744}
+.role{font-weight:700;font-size:8.8px;color:#1b2c40}
+.date{font-size:7.4px;color:#667085}
+ul{margin:3px 0 0 16px;padding:0}
+li{font-size:7.7px;margin-bottom:2px;line-height:1.35;color:#313b48}
+.skills{display:grid;grid-template-columns:1fr 1fr;gap:3px 16px}
+.skill{font-size:7.7px;color:#313b48;line-height:1.35}
+.skill b{color:#1b2c40}
+.dev-btn{margin-top:10px;width:100%;background:#111827;color:#fff;border:1px solid #111827}
+.dev-btn:hover{background:#000}
+.dev-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.62);z-index:9999;align-items:center;justify-content:center;padding:20px}
+.dev-modal{width:100%;max-width:430px;background:#fff;border-radius:12px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.dev-modal h3{margin:0 0 5px;color:#17365d;font-size:18px}
+.dev-modal p{font-size:12px;color:#667085;margin:0 0 14px}
+.dev-modal input{margin-bottom:10px}
+.dev-actions{display:flex;gap:8px;justify-content:flex-end}
+.dev-panel{display:none;margin-top:12px;padding:12px;border:1px solid #d0d5dd;border-radius:10px;background:#f8fafc}
+.dev-panel h4{margin:0 0 8px;color:#17365d}
+.dev-panel textarea{min-height:90px}
+.locked{font-size:11px;color:#667085;margin-top:6px}
+
+@media(max-width:1000px){
+ .app{grid-template-columns:1fr;padding:12px;gap:12px}
+ .editor{position:relative;height:auto;border-right:0;border-bottom:1px solid #ddd;border-radius:18px;top:0}
+ .preview-area{padding:0;overflow:auto}
+}
+@media print{
+ body{background:#fff}
+ .editor{display:none}
+ .app{display:block;padding:0}
+ .preview-area{padding:0}
+ .resume{width:210mm;min-height:297mm;margin:0;box-shadow:none;padding:11mm 13mm;border:none}
+ @page{size:A4;margin:0}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+<main class="preview-area">
+<div class="resume" id="resume">
+
+<header class="resume-header">
+  <div class="header-text">
+    <h1 class="name" id="rName"></h1>
+    <div class="headline" id="rHeadline"></div>
+    <div class="contact" id="rContact"></div>
+  </div>
+  <div class="photo-box" aria-label="Profile photo placeholder">
+    <div class="photo-placeholder">RN</div>
+  </div>
+</header>
+
+<section class="section">
+<h2 class="section-title">PROFESSIONAL SUMMARY</h2>
+<p id="rSummary"></p>
+</section>
+
+<section class="section">
+<h2 class="section-title">PROFESSIONAL EXPERIENCE</h2>
+<div class="role" id="rJobTitle"></div>
+<div class="date" id="rJobDate"></div>
+<ul id="rJobBullets"></ul>
+</section>
+
+<section class="section">
+<h2 class="section-title">INTERNSHIP EXPERIENCE</h2>
+<div class="role" id="rInternTitle"></div>
+<div class="date" id="rInternDate"></div>
+<ul id="rInternBullets"></ul>
+</section>
+
+<section class="section">
+<h2 class="section-title">PROJECTS</h2>
+<div class="role" id="rP1Title"></div>
+<div class="date" id="rP1Date"></div>
+<p id="rP1Desc"></p>
+<p><strong>Technologies/Concepts:</strong> <span id="rP1Tech"></span></p>
+<div class="role" style="margin-top:6px" id="rP2Title"></div>
+<div class="date" id="rP2Date"></div>
+<p id="rP2Desc"></p>
+</section>
+
+<section class="section">
+<h2 class="section-title">TECHNICAL SKILLS</h2>
+<div class="skills">
+<div class="skill"><b>Programming:</b> <span id="rProgramming"></span></div>
+<div class="skill"><b>Database:</b> <span id="rDatabase"></span></div>
+<div class="skill"><b>Data & Office:</b> <span id="rDataSkills"></span></div>
+<div class="skill"><b>Web:</b> <span id="rWebSkills"></span></div>
+<div class="skill"><b>Support:</b> <span id="rSupportSkills"></span></div>
+<div class="skill"><b>Professional:</b> <span id="rProfessionalSkills"></span></div>
+</div>
+</section>
+
+<section class="section">
+<h2 class="section-title">EDUCATION</h2>
+<p><strong id="rDegree"></strong> — <span id="rUniversity"></span></p>
+<p>Achievements: <span id="rEduAch"></span></p>
+<p><strong>Class XII:</strong> <span id="rXii"></span></p>
+<p><strong>Class X:</strong> <span id="rX"></span></p>
+</section>
+
+<section class="section">
+<h2 class="section-title">CERTIFICATION & ADDITIONAL</h2>
+<p><strong>Certification:</strong> <span id="rCert"></span> &nbsp; | &nbsp; <strong>Languages:</strong> <span id="rLanguages"></span></p>
+</section>
+
+<section class="section">
+<h2 class="section-title">TARGET ROLES</h2>
+<p id="rTargets"></p>
+</section>
+
+</div>
+</main>
+</div>
+
+<script>
+const resumeData = {
+  name: 'Rishabh Nandan',
+  headline: 'IT & Data Support | Data Analytics | Technical Support | Admission Portal Operations | Web Development',
+  phone: '+91-8317035123',
+  email: 'rishabhnandan789@gmail.com',
+  location: 'Prayagraj, Uttar Pradesh',
+  summary: 'B.C.A. Data Science student with practical experience in IT support, data management, admission portal operations, student assistance, and administrative coordination. Skilled in Python, MySQL, Excel, HTML, CSS, TypeScript, and data entry. Experienced in supporting online admission processes, handling student data, resolving portal-related issues, and preparing digital records. Seeking entry-level opportunities in Data Analytics, IT Support, Data Operations, Technical Support, Software/Application Support, Web Development, and other computer-related roles.',
+  jobTitle: 'C.M.P. Degree College — IT, Data & Admission Support',
+  jobStart: 'July 2024',
+  jobEnd: 'Present',
+  jobLocation: 'Prayagraj, Uttar Pradesh',
+  jobBullets: 'Manage and support day-to-day college admission portal operations.\nAssist students with online applications, login issues, counselling, document uploads, fee-related queries, and admission processes.\nPerform student data entry, data verification, data cleaning, record management, and Excel-based data processing.\nPrepare, organize, filter, and maintain student and admission data using Microsoft Excel.\nAssist in resolving technical and portal-related issues faced by students and administrative staff.\nCoordinate with departments for admission, student support, data processing, and administrative activities.\nProvide technical assistance for routine computer, software, portal, and digital-workflow related tasks.\nSupport preparation and management of digital records, reports, lists, and admission-related information.',
+  internTitle: 'LetsUpgrade — Campus Ambassador Intern',
+  internStart: 'January 2024',
+  internEnd: 'January 2025',
+  internBullets: 'Worked as a Campus Ambassador and developed practical exposure to technology and professional communication.\nGained hands-on exposure to HTML, CSS, Python, and Excel.\nDeveloped communication, teamwork, problem-solving, and coordination skills.\nParticipated in technology-oriented activities and interacted with students and professional communities.',
+  p1title: 'Car Inspection Web Application',
+  p1start: 'February 2025',
+  p1end: 'March 2026',
+  p1desc: 'Designed a digital vehicle inspection workflow with role-based access for Super Admin, Admin, and Workers/Inspectors. Included vehicle registration, inspection-data management, image capture, and an Under Review workflow. Proposed AI and Computer Vision integration for identifying visible vehicle issues such as scratches, dents, cracks, and paint damage.',
+  p1tech: 'HTML, CSS, Web Application, Artificial Intelligence, Computer Vision',
+  p2title: 'E-Commerce Website',
+  p2start: 'February 2025',
+  p2end: 'April 2025',
+  p2desc: 'Developed an e-commerce website using HTML and CSS, applying front-end development concepts to create user-facing web pages.',
+  programming: 'Python',
+  database: 'MySQL',
+  dataSkills: 'Microsoft Excel, Data Entry, Data Management, Data Processing',
+  webSkills: 'HTML, CSS, TypeScript',
+  supportSkills: 'IT Support, Technical Support, Admission Portal Operations, Student Support',
+  professionalSkills: 'Communication, Public Speaking, Teamwork, Problem Solving',
+  degree: 'Bachelor of Computer Applications (Data Science)',
+  university: 'University of Allahabad',
+  eduAch: 'Scholarship recipient; Class Representative',
+  xii: 'Uttar Pradesh Board, 2023 | 60% | Top 10 in class',
+  x: 'Uttar Pradesh Board, 2021 | 75%',
+  cert: 'YBI Foundation — May 2024 – Present',
+  languages: 'English, Hindi',
+  targets: 'Data Analyst (Entry Level) • Junior Data Analyst • Data Support Executive • MIS/Reporting Assistant • IT Support Executive • Technical Support Executive • Computer Operator • IT Assistant • Application/Software Support Executive • ERP/Portal Support Executive • Junior Web Developer • Front-End Developer (Entry Level) • Data Operations Executive'
+};
+
+function val(id){ return resumeData[id] || ''; }
+
+function bullets(text){
+  return text.split(/\n+/).map(x=>x.trim()).filter(Boolean)
+    .map(x=>`<li>${escapeHtml(x)}</li>`).join('');
+}
+function escapeHtml(text){
+  const d=document.createElement('div'); d.textContent=text; return d.innerHTML;
+}
+function update(){
+  document.getElementById('rName').textContent = val('name');
+  document.getElementById('rHeadline').textContent = val('headline');
+  document.getElementById('rContact').textContent = `${val('phone')} | ${val('email')} | ${val('location')}`;
+  document.getElementById('rSummary').textContent = val('summary');
+
+  document.getElementById('rJobTitle').textContent = val('jobTitle');
+  document.getElementById('rJobDate').textContent = `${val('jobStart')} – ${val('jobEnd')} | ${val('jobLocation')}`;
+  document.getElementById('rJobBullets').innerHTML = bullets(val('jobBullets'));
+
+  document.getElementById('rInternTitle').textContent = val('internTitle');
+  document.getElementById('rInternDate').textContent = `${val('internStart')} – ${val('internEnd')}`;
+  document.getElementById('rInternBullets').innerHTML = bullets(val('internBullets'));
+
+  document.getElementById('rP1Title').textContent = val('p1title');
+  document.getElementById('rP1Date').textContent = `${val('p1start')} – ${val('p1end')}`;
+  document.getElementById('rP1Desc').textContent = val('p1desc');
+  document.getElementById('rP1Tech').textContent = val('p1tech');
+
+  document.getElementById('rP2Title').textContent = val('p2title');
+  document.getElementById('rP2Date').textContent = `${val('p2start')} – ${val('p2end')}`;
+  document.getElementById('rP2Desc').textContent = val('p2desc');
+
+  document.getElementById('rProgramming').textContent = val('programming');
+  document.getElementById('rDatabase').textContent = val('database');
+  document.getElementById('rDataSkills').textContent = val('dataSkills');
+  document.getElementById('rWebSkills').textContent = val('webSkills');
+  document.getElementById('rSupportSkills').textContent = val('supportSkills');
+  document.getElementById('rProfessionalSkills').textContent = val('professionalSkills');
+
+  document.getElementById('rDegree').textContent = val('degree');
+  document.getElementById('rUniversity').textContent = val('university');
+  document.getElementById('rEduAch').textContent = val('eduAch');
+  document.getElementById('rXii').textContent = val('xii');
+  document.getElementById('rX').textContent = val('x');
+
+  document.getElementById('rCert').textContent = val('cert');
+  document.getElementById('rLanguages').textContent = val('languages');
+  document.getElementById('rTargets').textContent = val('targets');
+}
+
+update();
+</script>
+</body>
+</html>
